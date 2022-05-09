@@ -43,9 +43,7 @@ endif()
 if(${TRITON_COMMON_ENABLE_PROTOBUF})
   file(GLOB proto-srcs *.proto)
   protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${proto-srcs})
-  if(TRITON_COMMON_ENABLE_PROTOBUF_PYTHON)
-    protobuf_generate_python(PROTO_PY ${proto-srcs})
-  endif()
+  protobuf_generate_python(PROTO_PY ${proto-srcs})
 
   set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
   if(${TRITON_COMMON_ENABLE_GRPC})
@@ -76,9 +74,7 @@ if(${TRITON_COMMON_ENABLE_PROTOBUF})
       POSITION_INDEPENDENT_CODE ON
   )
 
-  if(TRITON_COMMON_ENABLE_PROTOBUF_PYTHON)
-    add_custom_target(proto-py-library DEPENDS ${PROTO_PY})
-  endif()
+  add_custom_target(proto-py-library DEPENDS ${PROTO_PY})
 
   install(
     FILES
@@ -95,9 +91,7 @@ if(${TRITON_COMMON_ENABLE_GRPC})
   get_filename_component(grpc_service_proto_dir "${grpc_service_proto_abspath}" PATH)
   set(GRPC_SRCS "grpc_service.grpc.pb.cc")
   set(GRPC_HDRS "grpc_service.grpc.pb.h")
-  if(TRITON_COMMON_ENABLE_PROTOBUF_PYTHON)
-    set(GRPC_PY "grpc_service.grpc.py")
-  endif()
+  set(GRPC_PY "grpc_service.grpc.py")
 
   add_custom_command(
     OUTPUT "${GRPC_SRCS}" "${GRPC_HDRS}"
@@ -111,19 +105,17 @@ if(${TRITON_COMMON_ENABLE_GRPC})
     DEPENDS "grpc_service.proto" proto-library
   )
 
-  if(TRITON_COMMON_ENABLE_PROTOBUF_PYTHON)
-    find_package(Python REQUIRED COMPONENTS Interpreter)
-    add_custom_command(
-      OUTPUT "${GRPC_PY}"
-      COMMAND ${Python_EXECUTABLE}
-      ARGS
-        -m grpc_tools.protoc
-        -I "${grpc_service_proto_dir}"
-        --grpc_python_out "${CMAKE_CURRENT_BINARY_DIR}"
-        "grpc_service.proto"
-      DEPENDS "grpc_service.proto" proto-library
-    )
-  endif()
+  find_package(Python REQUIRED COMPONENTS Interpreter)
+  add_custom_command(
+    OUTPUT "${GRPC_PY}"
+    COMMAND ${Python_EXECUTABLE}
+    ARGS
+      -m grpc_tools.protoc
+      -I "${grpc_service_proto_dir}"
+      --grpc_python_out "${CMAKE_CURRENT_BINARY_DIR}"
+      "grpc_service.proto"
+    DEPENDS "grpc_service.proto" proto-library
+  )
 
   add_library(
     grpc-service-library EXCLUDE_FROM_ALL OBJECT
@@ -149,9 +141,7 @@ if(${TRITON_COMMON_ENABLE_GRPC})
       POSITION_INDEPENDENT_CODE ON
   )
 
-  if(TRITON_COMMON_ENABLE_PROTOBUF_PYTHON)
-    add_custom_target(grpc-service-py-library DEPENDS ${GRPC_PY})
-  endif()
+  add_custom_target(grpc-service-py-library DEPENDS ${GRPC_PY})
 
   install(
     FILES
