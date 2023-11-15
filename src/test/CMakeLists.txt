@@ -34,7 +34,7 @@ include(FetchContent)
 FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/9406a60c7839052e4944ea4dbc8344762a89f9bd.zip
-  EXCLUDE_FROM_ALL
+  EXCLUDE_FROM_ALL  
 )
 FetchContent_MakeAvailable(googletest)
 

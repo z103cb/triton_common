@@ -200,4 +200,6 @@ set_target_properties(
     OUTPUT_NAME tritontableprinter
 )
 
-add_subdirectory(test)
+if(NOT ${TRITON_COMMON_TEST})
+  add_subdirectory(test)
+endif() # TRITON_COMMON_TEST
