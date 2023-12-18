@@ -38,6 +38,22 @@ option(TRITON_COMMON_ENABLE_PROTOBUF "Build protobuf artifacts" OFF)
 option(TRITON_COMMON_ENABLE_PROTOBUF_PYTHON "Build protobuf artifacts for python" ON)
 option(TRITON_COMMON_ENABLE_GRPC "Build grpc artifacts" OFF)
 option(TRITON_COMMON_ENABLE_JSON "Build json-related libs" ON)
+include(GNUInstallDirs)
+
+# Some libs are installed to ${TRITON_THIRD_PARTY_INSTALL_PREFIX}/{LIB}/lib64 instead
+# of ${TRITON_THIRD_PARTY_INSTALL_PREFIX}/{LIB}/lib on Centos
+set (LIB_DIR "lib")
+# /etc/os-release does not exist on Windows
+if(EXISTS "/etc/os-release")
+  file(STRINGS /etc/os-release DISTRO REGEX "^NAME=")
+  string(REGEX REPLACE "NAME=\"(.*)\"" "\\1" DISTRO "${DISTRO}")
+  message(STATUS "Distro Name: ${DISTRO}")
+  if(DISTRO MATCHES "CentOS.*")
+    set (LIB_DIR "lib64")
+  elseif(DISTRO MATCHES "Red Hat Enterprise Linux")
+    set (LIB_DIR "lib64")  
+  endif()
+endif()
 
 if(TRITON_COMMON_ENABLE_JSON)
   find_package(RapidJSON CONFIG REQUIRED)
